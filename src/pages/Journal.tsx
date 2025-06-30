@@ -13,21 +13,21 @@ interface JournalEntry {
   id: number;
   date: string;
   description: string;
-  lines: {
-    accountId: number;
-    debit: number;
-    credit: number;
+  details: {
+    accountsId: number;
+    debitAmt: number;
+    creditAmt: number;
   }[];
 }
 
 export const Journal: React.FC = () => {
-  const { data: accounts } = useFetch<Account[]>("accounts");
+  const { data: accounts } = useFetch<Account[]>("Accounts/Get");
   const {
     data: entries,
     loading: entriesLoading,
     error: entriesError,
     refetch,
-  } = useFetch<JournalEntry[]>("journalentries");
+  } = useFetch<JournalEntry[]>("Journals/Get");
 
   const { postData, loading: submitting, error: submitError } = usePost();
 
@@ -85,13 +85,13 @@ export const Journal: React.FC = () => {
     }
 
     try {
-      await postData("journalentries", {
+      await postData("Journals/Create", {
         date,
         description,
-        lines: lines.map((line) => ({
-          accountId: line.accountId,
-          debit: line.debit,
-          credit: line.credit,
+        details: lines.map((line) => ({
+          accountsId: line.accountId,
+          debitAmt: line.debit,
+          creditAmt: line.credit,
         })),
       });
 
@@ -283,10 +283,16 @@ export const Journal: React.FC = () => {
               <tbody>
                 {filteredEntries.map((entry) => (
                   <tr key={entry.id}>
-                    <td className="border px-2 py-1">{entry.date}</td>
+                    <td className="border px-2 py-1">
+                      {new Date(entry.date).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </td>
                     <td className="border px-2 py-1">{entry.description}</td>
                     <td className="border px-2 py-1 text-center">
-                      {entry.lines.length}
+                      {Array.isArray(entry.details) ? entry.details.length : 0}
                     </td>
                   </tr>
                 ))}

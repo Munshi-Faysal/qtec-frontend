@@ -2,14 +2,16 @@ import React from 'react';
 import { useFetch } from '../hooks/useFetch';
 
 interface TrialBalanceAccount {
-  id: number;
-  name: string;
+  accountId: number;
+  accountName: string;
   type: string;
-  netBalance: number; // positive for debit balance, negative for credit balance or vice versa
+  totalDebit: number; // Total debit amount for the account
+  totalCredit: number; // Total credit amount for the account
+  totalBalance: number; // positive for debit balance, negative for credit balance or vice versa
 }
 
 export const TrialBalance: React.FC = () => {
-  const { data: accounts, loading, error } = useFetch<TrialBalanceAccount[]>('trialbalance');
+  const { data: accounts, loading, error } = useFetch<TrialBalanceAccount[]>('Accounts/balances');
 
   // Ensure accounts is always an array to avoid runtime errors
   const accountList = Array.isArray(accounts) ? accounts : [];
@@ -31,10 +33,10 @@ export const TrialBalance: React.FC = () => {
     let creditTotal = 0;
 
     accountList.forEach((acc) => {
-      if (acc.netBalance >= 0) {
-        debitTotal += acc.netBalance;
+      if (acc.totalBalance >= 0) {
+        debitTotal += acc.totalBalance;
       } else {
-        creditTotal += Math.abs(acc.netBalance);
+        creditTotal += Math.abs(acc.totalBalance);
       }
     });
 
@@ -85,14 +87,14 @@ export const TrialBalance: React.FC = () => {
                 </thead>
                 <tbody>
                   {accs.map((acc) => (
-                    <tr key={acc.id} className="hover:bg-gray-50">
-                      <td className="border px-4 py-2">{acc.name}</td>
+                    <tr key={acc.accountId} className="hover:bg-gray-50">
+                      <td className="border px-4 py-2">{acc.accountName}</td>
                       <td
                         className={`border px-4 py-2 text-right ${
-                          acc.netBalance < 0 ? 'text-red-600' : 'text-green-700'
+                          acc.totalBalance < 0 ? 'text-red-600' : 'text-green-700'
                         }`}
                       >
-                        {acc.netBalance.toFixed(2)}
+                        {(acc.totalBalance ?? 0).toFixed(2)}
                       </td>
                     </tr>
                   ))}
@@ -103,10 +105,12 @@ export const TrialBalance: React.FC = () => {
 
           <div className="mt-6 font-bold text-right text-lg">
             <p>
-              Total Debit: <span className="text-green-700">{totals.debitTotal.toFixed(2)}</span>
+              Total Debit: <span className="text-green-700">{(totals.debitTotal ?? 0).toFixed(2)}</span>
+
             </p>
             <p>
-              Total Credit: <span className="text-red-600">{totals.creditTotal.toFixed(2)}</span>
+              Total Credit: <span className="text-red-600">{(totals.creditTotal ?? 0).toFixed(2)}</span>
+
             </p>
           </div>
         </>

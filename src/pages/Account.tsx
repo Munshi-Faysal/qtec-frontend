@@ -5,7 +5,7 @@ import type { Account } from '../models/Account';
 
 const Accounts: React.FC = () => {
   const [refreshKey, setRefreshKey] = useState(0);
-  const { data: accounts, loading, error } = useFetch<Account[]>(`accounts?refresh=${refreshKey}`);
+  const { data: accounts, loading, error } = useFetch<Account[]>(`Accounts/Get?refresh=${refreshKey}`);
   const { postData, loading: posting, error: postError } = usePost<Account>();
 
   const [name, setName] = useState('');
@@ -34,7 +34,7 @@ const Accounts: React.FC = () => {
 
     const newAccount = { name, type };
     try {
-      await postData('accounts', newAccount);
+      await postData('Accounts/Create', newAccount);
       setName('');
       setType('');
       setRefreshKey((prev) => prev + 1);

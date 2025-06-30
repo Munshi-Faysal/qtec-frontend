@@ -18,6 +18,7 @@ export function usePost<T = unknown>(): PostState<T> {
     setError(null);
 
     try {
+      debugger;
       const response = await dataService.post<T>(endpoint, payload);
       setData(response.data);
     } catch (err: any) {
