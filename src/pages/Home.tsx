@@ -26,12 +26,12 @@ const Home: React.FC = () => {
         </p>
 
         {/* CTA */}
-        <a
-          href="/account"
+        {/* <a
+          href="#"
           className="inline-block bg-white text-indigo-700 font-semibold px-8 py-3 rounded-full text-lg shadow-lg hover:bg-gray-100 transition duration-300"
         >
           View Account Module
-        </a>
+        </a> */}
       </div>
     </div>
   );
